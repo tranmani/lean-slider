@@ -1,0 +1,70 @@
+/* Lean Slider — front end, mobile first: base rules are for phones, desktop is a min-width enhancement. Inlined once per page by the plugin (minified). */
+.lsl { position: relative; width: 100%; margin: 0 auto; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+/* The slide scales with the page up to the design canvas size; beyond that the height stays and the
+   artwork stays centred at canvas width, with the slide background filling the sides. */
+.lsl-track { position: relative; width: 100%; aspect-ratio: var(--lsl-mar); max-height: var(--lsl-mch); overflow: hidden; touch-action: pan-y; }
+.lsl-slide { position: absolute; inset: 0; overflow: hidden; background-size: cover; background-position: center; }
+
+/* Fade: stacked slides, the active one on top. */
+.lsl--fade .lsl-slide { opacity: 0; visibility: hidden; transition: opacity var(--lsl-speed) ease, visibility 0s linear var(--lsl-speed); }
+.lsl--fade .lsl-slide.is-active { opacity: 1; visibility: visible; z-index: 1; transition: opacity var(--lsl-speed) ease; }
+/* Slide: the script positions the incoming slide, CSS animates it. */
+.lsl--slide .lsl-slide { transform: translateX(100%); visibility: hidden; transition: transform var(--lsl-speed) ease, visibility 0s linear var(--lsl-speed); }
+.lsl--slide .lsl-slide.is-active { transform: none; visibility: visible; z-index: 1; transition: transform var(--lsl-speed) ease; }
+.lsl--slide .lsl-slide.is-leaving { visibility: visible; }
+/* Until the page has loaded, only the first slide exists (its images get the bandwidth). */
+.lsl:not(.lsl-ready) .lsl-slide:not(.is-active) { display: none; }
+
+.lsl-bg { position: absolute; inset: 0; display: block; }
+.lsl-cover, .lsl-canvas { position: absolute; top: 0; bottom: 0; left: 50%; width: 100%; max-width: var(--lsl-mcw); transform: translateX(-50%); display: block; }
+.lsl-bg img, .lsl-pic, .lsl-pic img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; max-width: none; border: 0; border-radius: 0; box-shadow: none; }
+.lsl-canvas { z-index: 2; pointer-events: none; container-type: inline-size; }
+
+/* Layers: positions are percentages of the design canvas, type scales with the canvas width (cqw). Phone values first. */
+.lsl-l { position: absolute; left: var(--ml, auto); right: var(--mr, auto); top: var(--mt, auto); bottom: var(--mb, auto); width: var(--mw, auto); transform: translate(var(--mtx, 0), var(--mty, 0)); font-size: var(--mfs); line-height: var(--mlh); white-space: var(--mws, normal); display: var(--mdsp, block); text-align: var(--mta, left); }
+.lsl-l a, .lsl-l .lsl-btn { pointer-events: auto; }
+.lsl .lsl-t { display: block; margin: 0; font-size: inherit; line-height: inherit; text-decoration: none; border: 0; box-sizing: border-box; color: var(--c, inherit); background: var(--bgc, none); }
+.lsl .lsl-btn { display: inline-block; cursor: pointer; transition: background .2s ease, color .2s ease; }
+.lsl .lsl-btn:hover, .lsl .lsl-btn:focus-visible { color: var(--hc, var(--c, inherit)); background: var(--hbg, var(--bgc, none)); }
+.lsl a.lsl-t:hover, .lsl a.lsl-t:focus { text-decoration: none; color: var(--hc, var(--c, inherit)); }
+.lsl-li { display: block; width: 100%; height: auto; max-width: none; border: 0; border-radius: 0; box-shadow: none; }
+
+/* Animations: intro (fade / slide from a direction / zoom) and an optional floating loop. */
+.lsl-slide.is-active .lsl-in { animation: lsl-in var(--adur) cubic-bezier(.22, .61, .36, 1) var(--ad) both; }
+.lsl-slide:not(.is-active) .lsl-in { opacity: 0; }
+.lsl-slide.is-active .lsl-f { animation: lsl-float var(--fdur) ease-in-out var(--fdel) infinite alternate; }
+@keyframes lsl-in { from { opacity: 0; transform: translate(var(--ax), var(--ay)) scale(var(--as)); } to { opacity: 1; transform: none; } }
+@keyframes lsl-float { from { transform: translate(calc(var(--fx) * -1), calc(var(--fy) * -1)); } to { transform: translate(var(--fx), var(--fy)); } }
+
+/* Navigation: thumb-sized and always visible on phones. */
+.lsl-arrow { position: absolute; top: 50%; z-index: 3; width: 40px; height: 40px; margin: -20px 0 0; padding: 0; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--lsl-arrow-bg); color: var(--lsl-arrow); cursor: pointer; opacity: .9; transition: opacity .25s ease, background-color .2s ease; }
+.lsl-arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.lsl-arrow--prev { left: 8px; }
+.lsl-arrow--next { right: 8px; }
+.lsl-arrow:focus-visible, .lsl-dot:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.lsl-dots { position: absolute; left: 0; right: 0; bottom: 6px; z-index: 3; display: flex; justify-content: center; }
+/* 24px tap area around an 8px dot */
+.lsl-dot { width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+.lsl-dot::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .6); box-shadow: 0 0 0 1px rgba(0, 0, 0, .15); }
+.lsl-dot[aria-current="true"]::before { background: #fff; }
+
+/* Desktop */
+@media (min-width: 778px) {
+	.lsl-track { aspect-ratio: var(--lsl-ar); max-height: var(--lsl-ch); }
+	.lsl-cover, .lsl-canvas { max-width: var(--lsl-cw); }
+	.lsl-l { left: var(--l, auto); right: var(--r, auto); top: var(--t, auto); bottom: var(--b, auto); width: var(--w, auto); transform: translate(var(--tx, 0), var(--ty, 0)); font-size: var(--fs); line-height: var(--lh); white-space: var(--ws, normal); display: var(--dsp, block); text-align: var(--ta, left); }
+	.lsl-arrow--prev { left: 16px; }
+	.lsl-arrow--next { right: 16px; }
+	.lsl-arrow svg { width: 20px; height: 20px; }
+	.lsl-dots { bottom: 10px; }
+}
+/* Mouse users: arrows appear on hover so they don't cover the artwork. */
+@media (hover: hover) and (pointer: fine) {
+	.lsl-arrow { opacity: 0; }
+	.lsl:hover .lsl-arrow, .lsl:focus-within .lsl-arrow { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lsl-slide, .lsl-slide.is-active { transition: none !important; }
+	.lsl-slide.is-active .lsl-in, .lsl-slide.is-active .lsl-f { animation: none; }
+}
