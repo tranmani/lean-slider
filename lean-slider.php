@@ -3,7 +3,7 @@
  * Plugin Name:       Lean Slider
  * Plugin URI:        https://github.com/tranmani/lean-slider
  * Description:       A fast, search-friendly slider: real HTML images, headings and buttons, separate desktop and mobile images, CSS animations and a few kilobytes of script. Imports your Slider Revolution sliders and takes over their shortcodes and Elementor widgets.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Author:            Lean Slider contributors
@@ -15,7 +15,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LSL_VERSION', '1.0.2' );
+define( 'LSL_VERSION', '1.0.3' );
 define( 'LSL_FILE', __FILE__ );
 define( 'LSL_DIR', __DIR__ );
 define( 'LSL_URL', plugin_dir_url( __FILE__ ) );

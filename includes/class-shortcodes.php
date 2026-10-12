@@ -19,7 +19,8 @@ defined( 'ABSPATH' ) || exit;
 
 class Shortcodes {
 
-	const REV_TAGS = [ 'rev_slider', 'rev_slider_vc' ];
+	// nasa_rev_slider: NasaTheme (Elessi) wrapper, used by its Elementor widget; it prints nothing without Slider Revolution.
+	const REV_TAGS = [ 'rev_slider', 'rev_slider_vc', 'nasa_rev_slider' ];
 
 	/** Slider Revolution's original callbacks, kept as a fallback. */
 	private static $original = [];
@@ -53,8 +54,12 @@ class Shortcodes {
 		$atts   = is_array( $atts ) ? $atts : [];
 		$alias  = (string) ( $atts['alias'] ?? ( $atts[0] ?? '' ) );
 		$slider = '' !== $alias ? Sliders::find( $alias ) : null;
+		if ( ! $slider && ! empty( $atts['alias_m'] ) ) {
+			$slider = Sliders::find( (string) $atts['alias_m'] );
+		}
 		if ( $slider ) {
-			return self::output( $slider );
+			$html = self::output( $slider );
+			return empty( $atts['el_class'] ) ? $html : '<div class="' . esc_attr( $atts['el_class'] ) . '">' . $html . '</div>';
 		}
 		if ( isset( self::$original[ $tag ] ) && is_callable( self::$original[ $tag ] ) ) {
 			return call_user_func( self::$original[ $tag ], $atts, $content, $tag );
