@@ -144,7 +144,7 @@ class Admin {
 			case 'settings':
 				check_admin_referer( 'lsl_settings' );
 				lsl_update_settings( [
-					'takeover' => sanitize_key( $_POST['takeover'] ?? 'auto' ),
+					'takeover' => ! empty( $_POST['takeover'] ),
 					'updates'  => ! empty( $_POST['updates'] ),
 				] );
 				self::redirect( [ 'tab' => 'settings', 'msg' => 'settings' ] );
@@ -302,24 +302,15 @@ class Admin {
 		return implode( ', ', $out );
 	}
 
-	/** Explains who currently draws Slider Revolution's shortcodes. */
+	/** Reminds that imported sliders are not on the pages until the switch is on. */
 	private static function takeover_callout() {
-		if ( ! lsl_revslider_active() || ! Importer::available() ) {
-			return;
-		}
-		if ( lsl_takeover() ) {
-			echo '<div class="lsl-callout">' . wp_kses_post( sprintf(
-				/* translators: %s: plugins screen URL */
-				__( 'Lean Slider is already showing your imported sliders in place of Slider Revolution. When you are happy, <a href="%s">deactivate Slider Revolution</a> so its scripts stop loading.', 'lean-slider' ),
-				esc_url( admin_url( 'plugins.php' ) )
-			) ) . '</div>';
+		if ( lsl_takeover() || ! Importer::available() ) {
 			return;
 		}
 		echo '<div class="lsl-callout">' . wp_kses_post( sprintf(
-			/* translators: 1: settings URL, 2: plugins screen URL */
-			__( 'Slider Revolution is still active, so your pages still use it. After importing, <a href="%1$s">switch to Lean Slider</a> to check the result, then <a href="%2$s">deactivate Slider Revolution</a>.', 'lean-slider' ),
-			esc_url( self::url( [ 'tab' => 'settings' ] ) ),
-			esc_url( admin_url( 'plugins.php' ) )
+			/* translators: %s: settings URL */
+			__( 'Imported sliders appear on your pages once you <a href="%s">switch them on</a>.', 'lean-slider' ),
+			esc_url( self::url( [ 'tab' => 'settings' ] ) )
 		) ) . '</div>';
 	}
 
@@ -362,19 +353,10 @@ class Admin {
 		echo '<form method="post" class="lsl-card">';
 		wp_nonce_field( 'lsl_settings' );
 		echo '<input type="hidden" name="lsl_action" value="settings">';
-		echo '<h2>' . esc_html__( 'Slider Revolution shortcodes and widgets', 'lean-slider' ) . '</h2>';
-		echo '<p class="lsl-hint">' . esc_html__( 'Pages built with Slider Revolution use [rev_slider alias="…"] or its Elementor widget. Lean Slider can show the imported slider with the same alias instead, so no page needs editing.', 'lean-slider' ) . '</p>';
-		$options = [
-			'auto'   => [ __( 'Automatic', 'lean-slider' ), __( 'Use Lean Slider once Slider Revolution is deactivated (recommended).', 'lean-slider' ) ],
-			'always' => [ __( 'Now', 'lean-slider' ), __( 'Use Lean Slider even while Slider Revolution is active — for checking the result before you switch it off.', 'lean-slider' ) ],
-			'never'  => [ __( 'Never', 'lean-slider' ), __( 'Leave those shortcodes alone.', 'lean-slider' ) ],
-		];
-		echo '<div class="lsl-field lsl-switches">';
-		foreach ( $options as $key => $o ) {
-			printf( '<label><input type="radio" name="takeover" value="%s"%s><span><strong>%s</strong><br><span class="lsl-muted">%s</span></span></label>', esc_attr( $key ), checked( $s['takeover'], $key, false ), esc_html( $o[0] ), esc_html( $o[1] ) );
-		}
-		echo '</div>';
-		echo '<p class="lsl-hint">' . ( lsl_takeover() ? '<span class="lsl-pill lsl-pill--ok">' . esc_html__( 'Lean Slider is answering them now', 'lean-slider' ) . '</span>' : '<span class="lsl-pill lsl-pill--off">' . esc_html__( 'Slider Revolution is answering them now', 'lean-slider' ) . '</span>' ) . '</p>';
+		echo '<h2>' . esc_html__( 'Use imported sliders on your pages', 'lean-slider' ) . '</h2>';
+		echo '<p class="lsl-hint">' . esc_html__( 'Imported sliders keep their alias. When this is on, pages that still contain the old slider shortcode or Elementor widget show the Lean Slider version instead — no page needs editing.', 'lean-slider' ) . '</p>';
+		printf( '<div class="lsl-field lsl-switches"><label><input type="checkbox" name="takeover" value="1"%s><span><strong>%s</strong></span></label></div>', checked( $s['takeover'], 1, false ), esc_html__( 'On', 'lean-slider' ) );
+		echo '<p class="lsl-hint">' . ( lsl_takeover() ? '<span class="lsl-pill lsl-pill--ok">' . esc_html__( 'On — your pages show Lean Slider', 'lean-slider' ) . '</span>' : '<span class="lsl-pill lsl-pill--off">' . esc_html__( 'Off', 'lean-slider' ) . '</span>' ) . '</p>';
 		echo '<h2>' . esc_html__( 'Updates', 'lean-slider' ) . '</h2>';
 		printf( '<div class="lsl-field lsl-switches"><label><input type="checkbox" name="updates" value="1"%s><span>%s</span></label></div>', checked( $s['updates'], 1, false ), esc_html__( 'Check GitHub for new versions (shown on Dashboard → Updates).', 'lean-slider' ) );
 		echo '<p class="lsl-actions"><button class="button button-primary">' . esc_html__( 'Save settings', 'lean-slider' ) . '</button></p></form>';

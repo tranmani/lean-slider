@@ -32,8 +32,8 @@ Download `lean-slider.zip` from the [latest release](https://github.com/tranmani
 ## Switching from Slider Revolution
 
 1. Sliders → Import → import the sliders your pages use (they keep their alias).
-2. Sliders → Settings → Slider Revolution shortcodes → **Now**, and check your pages.
-3. Deactivate Slider Revolution; set the option back to **Automatic**.
+2. Sliders → Settings → "Use imported sliders on your pages" → **On**, and check your pages.
+3. Deactivate Slider Revolution.
 
 ## License
 

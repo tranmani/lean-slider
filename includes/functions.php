@@ -10,13 +10,12 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin-wide settings.
  *
- * takeover: who answers [rev_slider] / [rev_slider_vc] shortcodes and Elementor's
- *   "Slider Revolution" widget — 'auto' (Lean Slider once Slider Revolution is
- *   switched off), 'always' (Lean Slider even while it is on, for testing), 'never'.
+ * takeover: 1 = imported sliders replace their originals — Lean Slider answers the
+ *   [rev_slider] / [rev_slider_vc] shortcodes and Elementor's "Slider Revolution" widget. 0 = off.
  */
 function lsl_default_settings() {
 	return [
-		'takeover' => 'auto',
+		'takeover' => 0,
 		'updates'  => 1,
 	];
 }
@@ -26,28 +25,24 @@ function lsl_settings( $refresh = false ) {
 	if ( null === $settings || $refresh ) {
 		$saved    = get_option( 'lsl_settings', [] );
 		$settings = array_merge( lsl_default_settings(), is_array( $saved ) ? $saved : [] );
+		// 1.0.0 stored 'auto' / 'always' / 'never'; only 'always' meant replacing.
+		$settings['takeover'] = ( 1 === (int) $settings['takeover'] || 'always' === $settings['takeover'] ) ? 1 : 0;
 	}
 	return $settings;
 }
 
 function lsl_update_settings( array $settings ) {
 	$clean = [
-		'takeover' => in_array( $settings['takeover'] ?? '', [ 'auto', 'always', 'never' ], true ) ? $settings['takeover'] : 'auto',
+		'takeover' => empty( $settings['takeover'] ) ? 0 : 1,
 		'updates'  => empty( $settings['updates'] ) ? 0 : 1,
 	];
 	update_option( 'lsl_settings', $clean, true );
 	lsl_settings( true );
 }
 
-/** Is Slider Revolution itself loaded? */
-function lsl_revslider_active() {
-	return class_exists( 'RevSliderFront' ) || class_exists( 'RevSliderGlobals' ) || defined( 'RS_REVISION' );
-}
-
-/** Should Lean Slider answer Slider Revolution's shortcodes and widget? */
+/** Should Lean Slider answer the original slider shortcodes and widget? */
 function lsl_takeover() {
-	$mode = lsl_settings()['takeover'];
-	return 'always' === $mode || ( 'auto' === $mode && ! lsl_revslider_active() );
+	return 1 === lsl_settings()['takeover'];
 }
 
 /** Number with at most 4 decimals, no trailing zeros (for compact inline styles). */

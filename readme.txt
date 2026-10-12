@@ -4,7 +4,7 @@ Tags: slider, carousel, hero, performance, seo
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ Big slider plugins load hundreds of kilobytes of script and build the slider in 
 * **Live editor** — phone and desktop preview with your theme's fonts; drag layers to move them.
 * **Accessible** — keyboard, pause on hover/focus, pauses when off screen or in a background tab, respects "reduce motion".
 * **Import from Slider Revolution** — one click per slider: canvas sizes, desktop and mobile images, links, text, buttons, fonts, colours, hover colours, per-device visibility, animations and floating loops. Alt text is filled from the linked product's name.
-* **Switch without editing pages** — imported sliders keep their alias, and Lean Slider answers `[rev_slider alias="…"]`, `[rev_slider_vc]` and Elementor's "Slider Revolution" widget once Slider Revolution is deactivated (or right away, to check the result first).
+* **Switch without editing pages** — imported sliders keep their alias, and Lean Slider answers `[rev_slider alias="…"]`, `[rev_slider_vc]` and Elementor's "Slider Revolution" widget when Sliders → Settings → "Use imported sliders on your pages" is on.
 * Shortcode `[lean_slider alias="home"]` and a "Lean Slider" Elementor widget.
 * Updates from GitHub through WordPress's normal "Update now".
 
@@ -30,7 +30,7 @@ Big slider plugins load hundreds of kilobytes of script and build the slider in 
 
 1. Download `lean-slider.zip` from the latest GitHub release and upload it on Plugins → Add New → Upload.
 2. Activate. Go to Sliders → Import to bring over Slider Revolution sliders, or Sliders → Add slider.
-3. To switch an existing site: import, set Sliders → Settings → "Slider Revolution shortcodes" to **Now**, check your pages, then deactivate Slider Revolution and set it back to **Automatic**.
+3. Turn on Sliders → Settings → "Use imported sliders on your pages", check your pages, then deactivate Slider Revolution.
 
 == Frequently Asked Questions ==
 
@@ -51,6 +51,10 @@ Your theme's, unless a layer names a font. Lean Slider never loads fonts itself.
 Deactivating keeps everything. Deleting the plugin removes its sliders and settings.
 
 == Changelog ==
+
+= 1.0.1 =
+* The replace-imported-sliders setting is now a simple On/Off switch.
+* Fix: in Elementor containers that size widgets to their content (phones), the slider collapsed and the next section covered it.
 
 = 1.0.0 =
 * First release.

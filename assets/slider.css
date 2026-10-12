@@ -1,5 +1,8 @@
 /* Lean Slider — front end, mobile first: base rules are for phones, desktop is a min-width enhancement. Inlined once per page by the plugin (minified). */
 .lsl { position: relative; width: 100%; margin: 0 auto; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+/* The slider has no content width of its own, so a builder column that sizes widgets to their content
+   (Elementor containers on phones) would shrink it to nothing and let the next section slide over it. */
+.elementor-widget:has(> .elementor-widget-container > .lsl), .elementor-widget:has(> .lsl) { width: 100%; align-self: stretch; }
 /* The slide scales with the page up to the design canvas size; beyond that the height stays and the
    artwork stays centred at canvas width, with the slide background filling the sides. */
 .lsl-track { position: relative; width: 100%; aspect-ratio: var(--lsl-mar); max-height: var(--lsl-mch); overflow: hidden; touch-action: pan-y; }
