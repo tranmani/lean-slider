@@ -107,3 +107,40 @@ class Rev_Slider_Widget extends \Elementor\Widget_Base {
 		echo Shortcodes::output( '' !== $alias ? Sliders::find( $alias ) : null ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 }
+
+/**
+ * Stand-in for the "Rev Slider" widget of NasaTheme themes (Elessi and others), which
+ * those themes only register while Slider Revolution is active. Settings: alias (desktop)
+ * and alias_m (phones); a Lean Slider already has its own phone design, so alias_m is
+ * only used when it names a different slider.
+ */
+class Theme_Rev_Slider_Widget extends Rev_Slider_Widget {
+
+	public function get_name() {
+		return 'nasa-rev-slider';
+	}
+
+	protected function register_controls() {
+		$this->start_controls_section( 'content', [ 'label' => __( 'Slider', 'lean-slider' ) ] );
+		$this->add_control( 'alias', [ 'label' => __( 'Slider alias', 'lean-slider' ), 'type' => \Elementor\Controls_Manager::TEXT ] );
+		$this->add_control( 'alias_m', [ 'label' => __( 'Slider alias on phones', 'lean-slider' ), 'type' => \Elementor\Controls_Manager::TEXT ] );
+		$this->end_controls_section();
+	}
+
+	protected function render() {
+		$settings = $this->get_settings_for_display();
+		$alias    = sanitize_title( $settings['alias'] ?? '' );
+		$alias_m  = sanitize_title( $settings['alias_m'] ?? '' );
+		if ( '' === $alias ) {
+			$alias = $alias_m;
+		}
+		if ( '' === $alias_m || $alias_m === $alias ) {
+			echo Shortcodes::output( '' !== $alias ? Sliders::find( $alias ) : null ); // phpcs:ignore WordPress.Security.EscapeOutput
+			return;
+		}
+		// Different sliders for phones and larger screens.
+		echo '<style>.lsl-only-m{display:block}.lsl-only-d{display:none}@media (min-width:778px){.lsl-only-m{display:none}.lsl-only-d{display:block}}</style>';
+		echo '<div class="lsl-only-m">' . Shortcodes::output( Sliders::find( $alias_m ) ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput
+		echo '<div class="lsl-only-d">' . Shortcodes::output( Sliders::find( $alias ) ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput
+	}
+}

@@ -4,7 +4,7 @@ Tags: slider, carousel, hero, performance, seo
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,9 @@ Your theme's, unless a layer names a font. Lean Slider never loads fonts itself.
 Deactivating keeps everything. Deleting the plugin removes its sliders and settings.
 
 == Changelog ==
+
+= 1.0.2 =
+* Elementor pages built with the NasaTheme (Elessi) "Rev Slider" widget keep their slider when Slider Revolution is switched off.
 
 = 1.0.1 =
 * The replace-imported-sliders setting is now a simple On/Off switch.
