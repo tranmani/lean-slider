@@ -10,7 +10,7 @@
  * Speed: the stylesheet (about 4.5 KB) is inlined once, before the first slider, so
  * there is no extra request and nothing jumps; the script is 6 KB (2 KB gzipped), deferred, and
  * only loaded on pages that show a slider. The first image is fetched with high
- * priority; the other slides are not shown (and their images not requested)
+ * priority (and preloaded from <head> when the slider can be found early, see Preload); the other slides are not shown (and their images not requested)
  * until the page has finished loading.
  *
  * @package LeanSlider
@@ -384,6 +384,49 @@ class Render {
 			'class'    => 'lsl-img',
 		] );
 		return $html . '</picture>';
+	}
+
+	/**
+	 * <link rel="preload"> tags for the first image of a slider (see Preload), matching
+	 * what picture() shows: the phone image up to the breakpoint, the desktop image after it.
+	 *
+	 * @param array  $slider Normalised slider.
+	 * @param string $media  Extra media condition, e.g. when a theme widget shows this slider on phones only.
+	 */
+	public static function preload_links( $slider, $media = '' ) {
+		$slides = array_values( array_filter( $slider['slides'], static fn( $s ) => ! $s['hidden'] ) );
+		if ( ! $slides ) {
+			return '';
+		}
+		$slide = $slides[0];
+		$s     = $slider['settings'];
+		$desk  = $slide['image']['d'];
+		$mob   = $slide['image']['m'];
+		$and   = static fn( $q ) => implode( ' and ', array_filter( [ $media, $q ] ) );
+		if ( $desk['url'] && $mob['url'] && $mob['url'] !== $desk['url'] ) {
+			return self::preload_link( $mob, '100vw', $and( '(max-width: ' . (int) $s['breakpoint'] . 'px)' ) )
+				. self::preload_link( $desk, self::sizes( $s ), $and( '(min-width: ' . ( (int) $s['breakpoint'] + 1 ) . 'px)' ) );
+		}
+		$main = $mob['url'] ? $mob : $desk;
+		if ( $main['url'] ) {
+			return self::preload_link( $main, $main === $mob ? '100vw' : self::sizes( $s ), $media );
+		}
+		if ( $slide['bg']['image']['url'] ) {
+			return self::preload_link( $slide['bg']['image'], self::sizes( $s ), $media );
+		}
+		return '';
+	}
+
+	private static function preload_link( $image, $sizes, $media ) {
+		$srcset = $image['id'] ? wp_get_attachment_image_srcset( $image['id'], 'full' ) : '';
+		$html   = '<link rel="preload" as="image" href="' . esc_url( $image['url'] ) . '" fetchpriority="high"';
+		if ( $srcset ) {
+			$html .= ' imagesrcset="' . esc_attr( $srcset ) . '" imagesizes="' . esc_attr( $sizes ) . '"';
+		}
+		if ( '' !== $media ) {
+			$html .= ' media="' . esc_attr( $media ) . '"';
+		}
+		return $html . ">\n";
 	}
 
 	private static function img( $image, $o ) {

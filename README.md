@@ -12,7 +12,7 @@ It also imports Slider Revolution sliders and answers their `[rev_slider]` short
 | CSS | separate requests | 4.5 KB inlined once (2 KB gzipped) |
 | Slides in the HTML | no — built in the browser | yes: `<picture>`, alt text, headings, links |
 | Phone image | chosen by script | default `<img>`; desktop is a `min-width` `<source>` |
-| First image | waits for the script | `fetchpriority="high"`, real width/height |
+| First image | waits for the script | preloaded from `<head>`, `fetchpriority="high"`, real width/height |
 
 ## Features
 

@@ -4,7 +4,7 @@ Tags: slider, carousel, hero, performance, seo
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,7 @@ Big slider plugins load hundreds of kilobytes of script and build the slider in 
 * **In the page, for search engines** — images with alt text, srcset and real dimensions, headings, text and links are in the HTML. No script needed to see the first slide.
 * **Phones first** — the phone image is the default `<img>`; the desktop image is a `min-width` source, so phones never download it. Thumb-sized arrows and dots, swipe.
 * **Small** — about 4.5 KB of CSS (inlined once, no extra request) and 6 KB of script (2 KB gzipped, deferred), only on pages that show a slider. No jQuery.
-* **Fast first paint** — the first image loads with `fetchpriority="high"`; other slides and their images wait until the page has loaded. No layout shift.
+* **Fast first paint** — the first image loads with `fetchpriority="high"` and is preloaded from `<head>` when the slider is in the page's Elementor layout or content, so it does not wait behind the theme's stylesheets; other slides and their images wait until the page has loaded. No layout shift.
 * **Layers** — text, buttons and images placed on a design canvas, separately for phone and desktop, scaling with the screen. Entrance animations (fade, rise, drop, slide in, zoom) and a gentle floating loop, all CSS.
 * **Live editor** — phone and desktop preview with your theme's fonts; drag layers to move them.
 * **Accessible** — keyboard, pause on hover/focus, pauses when off screen or in a background tab, respects "reduce motion".
@@ -51,6 +51,9 @@ Your theme's, unless a layer names a font. Lean Slider never loads fonts itself.
 Deactivating keeps everything. Deleting the plugin removes its sliders and settings.
 
 == Changelog ==
+
+= 1.0.4 =
+* Faster hero image: the first slide's image is preloaded from the top of `<head>` (phone and desktop images each only on their own screen sizes) when the page's first slider is in its Elementor layout or content. On sites with many theme stylesheets the image no longer waits for all of them.
 
 = 1.0.3 =
 * Also answers the NasaTheme (Elessi) [nasa_rev_slider] shortcode, which its Elementor widget uses and which prints nothing once Slider Revolution is off.
